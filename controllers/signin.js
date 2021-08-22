@@ -1,4 +1,4 @@
-const handleSignIn = (req, res) => {
+const handleSignIn = (database, bcrypt) => (req, res) => {
   res.send('Sign in');
 };
 

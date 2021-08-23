@@ -21,7 +21,7 @@ const handleDeleteBudget = (database) => (req, res) => {
   database('budget')
     .where('app_user_id', app_user_id)
     .andWhere('id', id)
-    .del('id')
+    .del(['id'])
     .then((deletedBudgetIds) =>
       deletedBudgetIds.length
         ? res.json(deletedBudgetIds[0])

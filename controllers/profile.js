@@ -5,7 +5,7 @@ const handleChangeDisplayName = (database) => (req, res) => {
     .where('id', id)
     .update({ display_name }, ['display_name'])
     .then((displayNames) =>
-      displayNames.length ? res.json(displayNames[0]) : res.sendStatus(404)
+      displayNames.length ? res.json(displayNames[0]) : Promise.reject(Error())
     )
     .catch((error) => res.sendStatus(400));
 };

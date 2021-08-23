@@ -13,18 +13,23 @@ const handleChangeDisplayName = (database) => (req, res) => {
 const handleChangePassword = (database, bcrypt) => (req, res) => {
   const { id, password, new_password } = req.body;
 
+  // If incoming current and new passwords are the same, don't continue.
   if (password === new_password) res.sendStatus(400);
   else {
+    // Get the user's current hash.
     database('app_user')
       .where('id', id)
       .select('hash')
       .then((hashes) =>
         hashes.length ? hashes[0].hash : Promise.reject(Error())
       )
+      // Compare incoming password to hash.
       .then((hash) => bcrypt.compare(password, hash))
+      // If valid, hash the new password and return hash.
       .then((result) =>
         result ? bcrypt.hash(new_password, 10) : Promise.reject(Error())
       )
+      // Update database with new hash.
       .then((newHash) =>
         database('app_user')
           .where('id', id)

@@ -6,6 +6,7 @@ import handleSignUp from './controllers/signup.js';
 import handleSignIn from './controllers/signin.js';
 import {
   handleCreateBudget,
+  handleDeleteBudget,
   handleSaveBudget,
   handleSaveBudgets,
 } from './controllers/budget.js';
@@ -21,10 +22,11 @@ app.use(express.json());
 
 app.post('/signup', handleSignUp(database, bcrypt));
 app.post('/signin', handleSignIn(database, bcrypt));
-app.post('/createbudget', handleCreateBudget(database));
-app.put('/savebudget', handleSaveBudget(database));
-app.put('/savebudgets', handleSaveBudgets(database));
-app.put('/changedisplayname', handleChangeDisplayName(database));
-app.put('/changepassword', handleChangePassword(database, bcrypt));
+app.post('/budget', handleCreateBudget(database));
+app.delete('/budget', handleDeleteBudget(database));
+app.put('/budget', handleSaveBudget(database));
+app.put('/budgets', handleSaveBudgets(database));
+app.put('/displayname', handleChangeDisplayName(database));
+app.put('/password', handleChangePassword(database, bcrypt));
 
 app.listen(3001);

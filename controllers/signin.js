@@ -19,7 +19,7 @@ const handleSignIn = (database, bcrypt) => (req, res) => {
               'id',
               'username',
               'display_name',
-              'joined',
+              'join_date',
               'current_budget_index'
             )
         : Promise.reject(Error())

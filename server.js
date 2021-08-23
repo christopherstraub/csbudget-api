@@ -18,7 +18,9 @@ import {
 import database from './database.js';
 
 const app = express();
+
 app.use(express.json());
+app.use(cors());
 
 app.post('/sign-up', handleSignUp(database, bcrypt));
 app.post('/sign-in', handleSignIn(database, bcrypt));

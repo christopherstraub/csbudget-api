@@ -25,7 +25,7 @@ const handleDeleteBudget = (database) => (req, res) => {
     .then((deletedBudgetIds) =>
       deletedBudgetIds.length
         ? res.json(deletedBudgetIds[0])
-        : res.sendStatus(404)
+        : Promise.reject(Error())
     )
     .catch((error) => res.sendStatus(400));
 };
@@ -63,7 +63,7 @@ const handleSaveBudget = (database) => (req, res) => {
       ]
     )
     .then((savedBudgets) =>
-      savedBudgets.length ? res.json(savedBudgets[0]) : res.sendStatus(404)
+      savedBudgets.length ? res.json(savedBudgets[0]) : Promise.reject(Error())
     )
     .catch((error) => res.sendStatus(400));
 };
@@ -110,24 +110,22 @@ const handleSaveBudgets = (database) => (req, res) => {
           )
           .transacting(trx)
           .then((savedBudgets) =>
-            savedBudgets.length
-              ? savedBudgets[0]
-              : Promise.reject(Error('Not found'))
+            savedBudgets.length ? savedBudgets[0] : Promise.reject(Error())
           );
       });
 
       /*
-      Return a promise of all the queries to the transaction handler function.
-      If this promise resolves, the transaction will automatically commit.
-      If it rejects, the transaction will automatically rollback.
+      Returning a promise to the transaction handler function will
+      automatically commit the transaction upon promise resolution or
+      automatically rollback the transaction upon promise rejection.
+      We want to ensure all the queries resolve before committing the
+      transaction, thus we return the below promise to the transaction
+      handler function.
       */
       return Promise.all(queries);
     })
     .then((savedBudgets) => res.json(savedBudgets))
-    .catch((error) => {
-      if (error.message === 'Not found') res.sendStatus(404);
-      else res.sendStatus(400);
-    });
+    .catch((error) => res.sendStatus(400));
 };
 
 export {

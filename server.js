@@ -4,6 +4,7 @@ import cors from 'cors';
 
 import handleSignUp from './controllers/sign-up.js';
 import handleSignIn from './controllers/sign-in.js';
+import handleSignOut from './controllers/sign-out.js';
 import {
   handleCreateBudget,
   handleDeleteBudget,
@@ -24,6 +25,7 @@ app.use(cors());
 
 app.post('/sign-up', handleSignUp(database, bcrypt));
 app.post('/sign-in', handleSignIn(database, bcrypt));
+app.put('/sign-out', handleSignOut(database));
 app.post('/budget', handleCreateBudget(database));
 app.delete('/budget', handleDeleteBudget(database));
 app.put('/budget', handleSaveBudget(database));

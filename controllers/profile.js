@@ -27,8 +27,8 @@ const handleChangePassword = (database, bcrypt) => (req, res) => {
       // Compare incoming password to hash.
       .then((hash) => bcrypt.compare(password, hash))
       // If valid, hash the new password and return hash.
-      .then((result) =>
-        result ? bcrypt.hash(new_password, 10) : Promise.reject(Error())
+      .then((isValid) =>
+        isValid ? bcrypt.hash(new_password, 10) : Promise.reject(Error())
       )
       // Update database with new hash.
       .then((newHash) =>

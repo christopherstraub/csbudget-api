@@ -11,8 +11,8 @@ const handleSignIn = (database, bcrypt) => (req, res) => {
     // Compare incoming password to hash.
     .then((hash) => bcrypt.compare(password, hash))
     // If valid, return user.
-    .then((result) =>
-      result
+    .then((isValid) =>
+      isValid
         ? database('app_user').where('username', username).select('id')
         : Promise.reject(Error())
     )

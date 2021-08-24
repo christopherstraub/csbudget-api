@@ -13,7 +13,8 @@ const handleChangeDisplayName = (database) => (req, res) => {
 const handleChangePassword = (database, bcrypt) => (req, res) => {
   const { id, password, new_password } = req.body;
 
-  // If incoming current and new passwords are the same, don't continue.
+  // If incoming current and new passwords are the same,
+  // respond with a 400 Bad Request status code.
   if (password === new_password) res.sendStatus(400);
   else {
     // Get the user's current hash.

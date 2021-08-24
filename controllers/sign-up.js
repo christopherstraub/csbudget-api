@@ -1,8 +1,17 @@
 const handleSignUp = (database, bcrypt) => (req, res) => {
   const { username, password, display_name } = req.body;
 
-  bcrypt
-    .hash(password, 10)
+  // If a user with the incoming username already exists,
+  // respond with a 409 Conflict status code.
+  database('app_user')
+    .where('username', username)
+    .select()
+    .then((users) =>
+      users.length ? Promise.reject(Error('Conflict')) : Promise.resolve()
+    )
+    // Hash password.
+    .then(() => bcrypt.hash(password, 10))
+    // Enter user into database with hash.
     .then((hash) =>
       database('app_user').insert(
         {
@@ -15,7 +24,10 @@ const handleSignUp = (database, bcrypt) => (req, res) => {
       )
     )
     .then((users) => res.json(users[0]))
-    .catch((error) => res.sendStatus(400));
+    .catch((error) => {
+      if (error.message === 'Conflict') res.sendStatus(409);
+      else res.sendStatus(400);
+    });
 };
 
 export default handleSignUp;

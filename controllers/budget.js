@@ -35,7 +35,6 @@ const handleSaveBudget = (database) => (req, res) => {
     app_user_id,
     id,
     name,
-    last_saved,
     projected_monthly_income,
     actual_monthly_income,
     entries,
@@ -47,7 +46,7 @@ const handleSaveBudget = (database) => (req, res) => {
     .update(
       {
         name,
-        last_saved,
+        last_saved: new Date(),
         projected_monthly_income,
         actual_monthly_income,
         entries,
@@ -81,7 +80,6 @@ const handleSaveBudgets = (database) => (req, res) => {
       const queries = budgets.map((budget) => {
         const {
           name,
-          last_saved,
           projected_monthly_income,
           actual_monthly_income,
           entries,
@@ -93,7 +91,7 @@ const handleSaveBudgets = (database) => (req, res) => {
           .update(
             {
               name,
-              last_saved,
+              last_saved: new Date(),
               projected_monthly_income,
               actual_monthly_income,
               entries,

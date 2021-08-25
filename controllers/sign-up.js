@@ -1,5 +1,5 @@
 const handleSignUp = (database, bcrypt) => (req, res) => {
-  const { username, password, display_name } = req.body;
+  const { display_name, username, password } = req.body;
 
   // If a user with the incoming username already exists,
   // respond with a 409 Conflict status code.
@@ -16,8 +16,8 @@ const handleSignUp = (database, bcrypt) => (req, res) => {
       database('app_user').insert(
         {
           username,
-          hash,
           display_name,
+          hash,
           join_date: new Date(),
         },
         ['id', 'username', 'display_name', 'join_date', 'current_budget_index']

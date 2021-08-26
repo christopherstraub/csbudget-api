@@ -1,8 +1,8 @@
 const handleCreateBudget = (database) => (req, res) => {
-  const { app_user_id, name, entries } = req.body;
+  const { app_user_id, name } = req.body;
 
   database('budget')
-    .insert({ app_user_id, name, entries }, [
+    .insert({ app_user_id, name }, [
       'id',
       'name',
       'last_saved',

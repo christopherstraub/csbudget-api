@@ -1,6 +1,10 @@
 const handleSignIn = (database, bcrypt) => (req, res) => {
   const { username, password } = req.body;
 
+  // Validation
+  if (!username || !password || password.length < 8 || password.length > 128)
+    return res.sendStatus(400);
+
   // Get the user's current hash.
   database('app_user')
     .where('username', username)

@@ -1,6 +1,8 @@
 const handleChangeDisplayName = (database) => (req, res) => {
   const { id, display_name } = req.body;
 
+  if (!id || !display_name) return res.sendStatus(400);
+
   database('app_user')
     .where('id', id)
     .update({ display_name }, ['display_name'])
@@ -13,32 +15,43 @@ const handleChangeDisplayName = (database) => (req, res) => {
 const handleChangePassword = (database, bcrypt) => (req, res) => {
   const { id, password, new_password } = req.body;
 
-  // If incoming current and new passwords are the same,
-  // respond with a 400 Bad Request status code.
-  if (password === new_password) res.sendStatus(400);
-  else {
-    // Get the user's current hash.
-    database('app_user')
-      .where('id', id)
-      .select('hash')
-      .then((hashes) =>
-        hashes.length ? hashes[0].hash : Promise.reject(Error())
-      )
-      // Compare incoming password to hash.
-      .then((hash) => bcrypt.compare(password, hash))
-      // If valid, hash the new password and return hash.
-      .then((isValid) =>
-        isValid ? bcrypt.hash(new_password, 10) : Promise.reject(Error())
-      )
-      // Update database with new hash.
-      .then((newHash) =>
-        database('app_user')
-          .where('id', id)
-          .update({ hash: newHash })
-          .then(() => res.sendStatus(200))
-      )
-      .catch((error) => res.sendStatus(400));
-  }
+  // Validation.
+  if (
+    !id ||
+    !password ||
+    !new_password ||
+    password.length < 8 ||
+    password.length > 128 ||
+    newPassword.length < 8 ||
+    newPassword.length > 128
+  )
+    return res.sendStatus(400);
+
+  /* If incoming current and new passwords are the same,
+  respond with a 400 Bad Request status code. */
+  if (password === new_password) return res.sendStatus(400);
+
+  // Get the user's current hash.
+  database('app_user')
+    .where('id', id)
+    .select('hash')
+    .then((hashes) =>
+      hashes.length ? hashes[0].hash : Promise.reject(Error())
+    )
+    // Compare incoming password to hash.
+    .then((hash) => bcrypt.compare(password, hash))
+    // If valid, hash the new password and return hash.
+    .then((isValid) =>
+      isValid ? bcrypt.hash(new_password, 10) : Promise.reject(Error())
+    )
+    // Update database with new hash.
+    .then((newHash) =>
+      database('app_user')
+        .where('id', id)
+        .update({ hash: newHash })
+        .then(() => res.sendStatus(200))
+    )
+    .catch((error) => res.sendStatus(400));
 };
 
 export { handleChangeDisplayName, handleChangePassword };

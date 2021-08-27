@@ -1,6 +1,9 @@
 const handleCreateBudget = (database) => (req, res) => {
   const { app_user_id, name } = req.body;
 
+  // Validation.
+  if (!app_user_id || !name) return res.sendStatus(400);
+
   database('budget')
     .insert({ app_user_id, name }, [
       'id',
@@ -17,6 +20,9 @@ const handleCreateBudget = (database) => (req, res) => {
 
 const handleDeleteBudget = (database) => (req, res) => {
   const { app_user_id, id } = req.body;
+
+  // Validation.
+  if (!app_user_id || !id) return res.sendStatus(400);
 
   database('budget')
     .where('app_user_id', app_user_id)
@@ -39,6 +45,17 @@ const handleSaveBudget = (database) => (req, res) => {
     actual_monthly_income,
     entries,
   } = req.body;
+
+  // Validation.
+  if (
+    !app_user_id ||
+    !id ||
+    !name ||
+    !projected_monthly_income ||
+    !actual_monthly_income ||
+    !entries
+  )
+    return res.sendStatus(400);
 
   database('budget')
     .where('app_user_id', app_user_id)
@@ -69,6 +86,9 @@ const handleSaveBudget = (database) => (req, res) => {
 
 const handleSaveBudgets = (database) => (req, res) => {
   const { app_user_id, budgets } = req.body;
+
+  // Validation.
+  if (!app_user_id || !budgets) return res.sendStatus(400);
 
   /*
   Map each budget to a query (promise). Chain the transacting

@@ -1,7 +1,15 @@
 const handleSignUp = (database, bcrypt) => (req, res) => {
   const { display_name, username, password } = req.body;
 
-  if (!display_name || !username || !password) return res.sendStatus(400);
+  // Validation.
+  if (
+    !display_name ||
+    !username ||
+    !password ||
+    password.length < 8 ||
+    password.length > 128
+  )
+    return res.sendStatus(400);
 
   /* If a user with the incoming username already exists,
   respond with a 409 Conflict status code. */

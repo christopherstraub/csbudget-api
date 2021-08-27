@@ -2,7 +2,7 @@ const handleCreateBudget = (database) => (req, res) => {
   const { app_user_id, name } = req.body;
 
   // Validation.
-  if (!app_user_id || !name) return res.sendStatus(400);
+  if (!Number.isInteger(app_user_id) || !name) return res.sendStatus(400);
 
   database('budget')
     .insert({ app_user_id, name }, [
@@ -22,7 +22,8 @@ const handleDeleteBudget = (database) => (req, res) => {
   const { app_user_id, id } = req.body;
 
   // Validation.
-  if (!app_user_id || !id) return res.sendStatus(400);
+  if (!Number.isInteger(app_user_id) || !Number.isInteger(id))
+    return res.sendStatus(400);
 
   database('budget')
     .where('app_user_id', app_user_id)
@@ -48,11 +49,11 @@ const handleSaveBudget = (database) => (req, res) => {
 
   // Validation.
   if (
-    !app_user_id ||
-    !id ||
+    !Number.isInteger(app_user_id) ||
+    !Number.isInteger(id) ||
     !name ||
-    !projected_monthly_income ||
-    !actual_monthly_income ||
+    isNaN(projected_monthly_income) ||
+    isNaN(actual_monthly_income) ||
     !entries
   )
     return res.sendStatus(400);
@@ -88,7 +89,7 @@ const handleSaveBudgets = (database) => (req, res) => {
   const { app_user_id, budgets } = req.body;
 
   // Validation.
-  if (!app_user_id || !budgets) return res.sendStatus(400);
+  if (!Number.isInteger(app_user_id) || !budgets) return res.sendStatus(400);
 
   /*
   Map each budget to a query (promise). Chain the transacting

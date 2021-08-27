@@ -1,7 +1,7 @@
 const handleChangeDisplayName = (database) => (req, res) => {
   const { id, display_name } = req.body;
 
-  if (!id || !display_name) return res.sendStatus(400);
+  if (!Number.isInteger(id) || !display_name) return res.sendStatus(400);
 
   database('app_user')
     .where('id', id)
@@ -17,7 +17,7 @@ const handleChangePassword = (database, bcrypt) => (req, res) => {
 
   // Validation.
   if (
-    !id ||
+    !Number.isInteger(id) ||
     !password ||
     !new_password ||
     password.length < 8 ||

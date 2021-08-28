@@ -7,6 +7,7 @@ import handleSignIn from './controllers/sign-in.js';
 import handleSignOut from './controllers/sign-out.js';
 import {
   handleCreateBudget,
+  handleCreateBudgetCopy,
   handleDeleteBudget,
   handleSaveBudget,
   handleSaveBudgets,
@@ -27,6 +28,7 @@ app.post('/sign-up', handleSignUp(database, bcrypt));
 app.post('/sign-in', handleSignIn(database, bcrypt));
 app.put('/sign-out', handleSignOut(database));
 app.post('/budget', handleCreateBudget(database));
+app.post('/budget-copy', handleCreateBudgetCopy(database));
 app.delete('/budget', handleDeleteBudget(database));
 app.put('/budget', handleSaveBudget(database));
 app.put('/budgets', handleSaveBudgets(database));

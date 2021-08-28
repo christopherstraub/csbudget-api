@@ -18,6 +18,51 @@ const handleCreateBudget = (database) => (req, res) => {
     .catch((error) => res.sendStatus(400));
 };
 
+const handleCreateBudgetCopy = (database) => (req, res) => {
+  const {
+    app_user_id,
+    name,
+    projected_monthly_income,
+    actual_monthly_income,
+    entries_created,
+    entries,
+  } = req.body;
+
+  // Validation.
+  if (
+    !Number.isInteger(app_user_id) ||
+    !name ||
+    isNaN(projected_monthly_income) ||
+    isNaN(actual_monthly_income) ||
+    !Number.isInteger(entries_created) ||
+    !entries
+  )
+    return res.sendStatus(400);
+
+  database('budget')
+    .insert(
+      {
+        app_user_id,
+        name,
+        projected_monthly_income,
+        actual_monthly_income,
+        entries_created,
+        entries: JSON.stringify(entries),
+      },
+      [
+        'id',
+        'name',
+        'last_saved',
+        'projected_monthly_income',
+        'actual_monthly_income',
+        'entries_created',
+        'entries',
+      ]
+    )
+    .then((budgets) => res.json(budgets[0]))
+    .catch((error) => res.sendStatus(400));
+};
+
 const handleDeleteBudget = (database) => (req, res) => {
   const { app_user_id, id } = req.body;
 
@@ -146,6 +191,7 @@ const handleSaveBudgets = (database) => (req, res) => {
 
 export {
   handleCreateBudget,
+  handleCreateBudgetCopy,
   handleDeleteBudget,
   handleSaveBudget,
   handleSaveBudgets,

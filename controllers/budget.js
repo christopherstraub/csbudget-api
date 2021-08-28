@@ -67,17 +67,9 @@ const handleSaveBudget = (database) => (req, res) => {
         last_saved: new Date(),
         projected_monthly_income,
         actual_monthly_income,
-        entries,
+        entries: JSON.stringify(entries),
       },
-      [
-        'id',
-        'name',
-        'last_saved',
-        'projected_monthly_income',
-        'actual_monthly_income',
-        'entries_created',
-        'entries',
-      ]
+      ['id', 'last_saved']
     )
     .then((savedBudgets) =>
       savedBudgets.length ? res.json(savedBudgets[0]) : Promise.reject(Error())

@@ -85,10 +85,9 @@ const handleSignUp = (database, bcrypt) => (req, res) => {
     // Extract a nice user object from the data.
     .then((data) => ({ ...data[0][0], budgets: data[1] }))
     .then((user) => res.json(user))
-    .catch((error) => {
-      if (error.message === 'Conflict') res.sendStatus(409);
-      else res.json(error.message);
-    });
+    .catch((error) =>
+      error.message === 'Conflict' ? res.sendStatus(409) : res.sendStatus(400)
+    );
 };
 
 export default handleSignUp;

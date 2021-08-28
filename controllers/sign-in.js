@@ -44,7 +44,8 @@ const handleSignIn = (database, bcrypt) => (req, res) => {
             'actual_monthly_income',
             'entries_created',
             'entries'
-          ),
+          )
+          .orderBy('id'),
       ])
     )
     // Extract a nice user object from the data.

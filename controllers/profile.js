@@ -22,14 +22,11 @@ const handleChangePassword = (database, bcrypt) => (req, res) => {
     !new_password ||
     password.length < 8 ||
     password.length > 128 ||
-    newPassword.length < 8 ||
-    newPassword.length > 128
+    new_password.length < 8 ||
+    new_password.length > 128 ||
+    password === new_password
   )
     return res.sendStatus(400);
-
-  /* If incoming current and new passwords are the same,
-  respond with a 400 Bad Request status code. */
-  if (password === new_password) return res.sendStatus(400);
 
   // Get the user's current hash.
   database('app_user')
@@ -42,7 +39,9 @@ const handleChangePassword = (database, bcrypt) => (req, res) => {
     .then((hash) => bcrypt.compare(password, hash))
     // If valid, hash the new password and return hash.
     .then((isValid) =>
-      isValid ? bcrypt.hash(new_password, 10) : Promise.reject(Error())
+      isValid
+        ? bcrypt.hash(new_password, 10)
+        : Promise.reject(Error('Unauthorized'))
     )
     // Update database with new hash.
     .then((newHash) =>
@@ -51,7 +50,11 @@ const handleChangePassword = (database, bcrypt) => (req, res) => {
         .update({ hash: newHash })
         .then(() => res.sendStatus(200))
     )
-    .catch((error) => res.sendStatus(400));
+    .catch((error) =>
+      error.message === 'Unauthorized'
+        ? res.sendStatus(401)
+        : res.sendStatus(400)
+    );
 };
 
 export { handleChangeDisplayName, handleChangePassword };

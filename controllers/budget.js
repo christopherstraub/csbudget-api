@@ -44,6 +44,7 @@ const handleSaveBudget = (database) => (req, res) => {
     name,
     projected_monthly_income,
     actual_monthly_income,
+    entries_created,
     entries,
   } = req.body;
 
@@ -54,6 +55,7 @@ const handleSaveBudget = (database) => (req, res) => {
     !name ||
     isNaN(projected_monthly_income) ||
     isNaN(actual_monthly_income) ||
+    !Number.isInteger(entries_created) ||
     !entries
   )
     return res.sendStatus(400);
@@ -67,6 +69,7 @@ const handleSaveBudget = (database) => (req, res) => {
         last_saved: new Date(),
         projected_monthly_income,
         actual_monthly_income,
+        entries_created,
         entries: JSON.stringify(entries),
       },
       ['id', 'last_saved']
@@ -93,8 +96,9 @@ const handleSaveBudgets = (database) => (req, res) => {
       const queries = budgets.map((budget) => {
         const {
           name,
-          projected_monthly_income,
-          actual_monthly_income,
+          projectedMonthlyIncome: projected_monthly_income,
+          actualMonthlyIncome: actual_monthly_income,
+          entriesCreated: entries_created,
           entries,
         } = budget;
 
@@ -107,7 +111,8 @@ const handleSaveBudgets = (database) => (req, res) => {
               last_saved: new Date(),
               projected_monthly_income,
               actual_monthly_income,
-              entries,
+              entries_created,
+              entries: JSON.stringify(entries),
             },
             [
               'id',

@@ -35,4 +35,4 @@ app.put('/budgets', handleSaveBudgets(database));
 app.put('/display-name', handleChangeDisplayName(database));
 app.put('/password', handleChangePassword(database, bcrypt));
 
-app.listen(3001);
+app.listen(process.env.PORT);

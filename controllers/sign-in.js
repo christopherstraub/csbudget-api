@@ -32,7 +32,8 @@ const handleSignIn = (database, bcrypt) => (req, res) => {
             'username',
             'display_name',
             'join_date',
-            'current_budget_index'
+            'current_budget_index',
+            'format_args'
           ),
         database('budget')
           .where('app_user_id', id)

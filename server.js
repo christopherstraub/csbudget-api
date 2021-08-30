@@ -13,8 +13,9 @@ import {
   handleSaveBudgets,
 } from './controllers/budget.js';
 import {
-  handleChangeDisplayName,
-  handleChangePassword,
+  handleDisplayNameChange,
+  handlePasswordChange,
+  handleCurrencyChange,
 } from './controllers/profile.js';
 
 import database from './database.js';
@@ -32,7 +33,8 @@ app.post('/budget-copy', handleCreateBudgetCopy(database));
 app.delete('/budget', handleDeleteBudget(database));
 app.put('/budget', handleSaveBudget(database));
 app.put('/budgets', handleSaveBudgets(database));
-app.put('/display-name', handleChangeDisplayName(database));
-app.put('/password', handleChangePassword(database, bcrypt));
+app.put('/display-name', handleDisplayNameChange(database));
+app.put('/password', handlePasswordChange(database, bcrypt));
+app.put('/currency', handleCurrencyChange(database));
 
 app.listen(process.env.PORT);

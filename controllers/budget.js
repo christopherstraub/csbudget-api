@@ -71,8 +71,8 @@ const handleDeleteBudget = (database) => (req, res) => {
     return res.sendStatus(400);
 
   database('budget')
-    .where('app_user_id', app_user_id)
-    .andWhere('id', id)
+    .where({ app_user_id })
+    .andWhere({ id })
     .del(['id'])
     .then((deletedBudgetIds) =>
       deletedBudgetIds.length
@@ -106,8 +106,8 @@ const handleSaveBudget = (database) => (req, res) => {
     return res.sendStatus(400);
 
   database('budget')
-    .where('app_user_id', app_user_id)
-    .andWhere('id', id)
+    .where({ app_user_id })
+    .andWhere({ id })
     .update(
       {
         name,
@@ -148,8 +148,8 @@ const handleSaveBudgets = (database) => (req, res) => {
         } = budget;
 
         return database('budget')
-          .where('app_user_id', app_user_id)
-          .andWhere('id', budget.id)
+          .where({ app_user_id })
+          .andWhere({ id: budget.id })
           .update(
             {
               name,

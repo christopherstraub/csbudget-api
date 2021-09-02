@@ -7,7 +7,7 @@ const handleSignIn = (database, bcrypt) => (req, res) => {
 
   // Get the user's current hash.
   database('app_user')
-    .where('username', username)
+    .where({ username })
     .select('hash')
     .then((hashes) =>
       hashes.length ? hashes[0].hash : Promise.reject(Error())
@@ -17,7 +17,7 @@ const handleSignIn = (database, bcrypt) => (req, res) => {
     // If valid, return user.
     .then((isValid) =>
       isValid
-        ? database('app_user').where('username', username).select('id')
+        ? database('app_user').where({ username }).select('id')
         : Promise.reject(Error())
     )
     .then((ids) => ids[0].id)
@@ -26,7 +26,7 @@ const handleSignIn = (database, bcrypt) => (req, res) => {
     .then((id) =>
       Promise.all([
         database('app_user')
-          .where('id', id)
+          .where({ id })
           .select(
             'id',
             'username',
@@ -36,7 +36,7 @@ const handleSignIn = (database, bcrypt) => (req, res) => {
             'format_args'
           ),
         database('budget')
-          .where('app_user_id', id)
+          .where({ app_user_id: id })
           .select(
             'id',
             'name',

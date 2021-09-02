@@ -5,7 +5,7 @@ const handleDisplayNameChange = (database) => (req, res) => {
   if (!Number.isInteger(id) || !display_name) return res.sendStatus(400);
 
   database('app_user')
-    .where('id', id)
+    .where({ id })
     .update({ display_name }, ['display_name'])
     .then((displayNames) =>
       displayNames.length ? res.json(displayNames[0]) : Promise.reject(Error())
@@ -31,7 +31,7 @@ const handlePasswordChange = (database, bcrypt) => (req, res) => {
 
   // Get the user's current hash.
   database('app_user')
-    .where('id', id)
+    .where({ id })
     .select('hash')
     .then((hashes) =>
       hashes.length ? hashes[0].hash : Promise.reject(Error())
@@ -47,7 +47,7 @@ const handlePasswordChange = (database, bcrypt) => (req, res) => {
     // Update database with new hash.
     .then((newHash) =>
       database('app_user')
-        .where('id', id)
+        .where({ id })
         .update({ hash: newHash })
         .then(() => res.sendStatus(200))
     )
@@ -64,7 +64,7 @@ const handleCurrencyChange = (database) => (req, res) => {
   if (!Number.isInteger(id) || !format_args) return res.sendStatus(400);
 
   database('app_user')
-    .where('id', id)
+    .where({ id })
     .update({ format_args: JSON.stringify(format_args) }, ['format_args'])
     .then((formatArgs) =>
       formatArgs.length ? res.json(formatArgs[0]) : Promise.reject(Error())

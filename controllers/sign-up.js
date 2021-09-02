@@ -14,7 +14,7 @@ const handleSignUp = (database, bcrypt) => (req, res) => {
   /* If a user with the incoming username already exists,
   respond with a 409 Conflict status code. */
   database('app_user')
-    .where('username', username)
+    .where({ username })
     .select()
     .then((users) =>
       users.length ? Promise.reject(Error('Conflict')) : Promise.resolve()
@@ -61,7 +61,7 @@ const handleSignUp = (database, bcrypt) => (req, res) => {
     .then((id) =>
       Promise.all([
         database('app_user')
-          .where('id', id)
+          .where({ id })
           .select(
             'id',
             'username',
@@ -71,7 +71,7 @@ const handleSignUp = (database, bcrypt) => (req, res) => {
             'format_args'
           ),
         database('budget')
-          .where('app_user_id', id)
+          .where({ app_user_id: id })
           .select(
             'id',
             'name',

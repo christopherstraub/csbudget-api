@@ -12,7 +12,7 @@ const handleSignOut = (database) => (req, res) => {
 
   // Save user's current budget index.
   database('app_user')
-    .where('id', id)
+    .where({ id })
     .update({ current_budget_index })
     .then(() => res.sendStatus(200))
     .catch((error) => res.sendStatus(400));

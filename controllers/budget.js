@@ -64,16 +64,36 @@ const handleCreateBudgetCopy = (database) => (req, res) => {
 };
 
 const handleDeleteBudget = (database) => (req, res) => {
-  const { app_user_id, id } = req.body;
+  const { app_user_id, id, current_budget_index } = req.body;
+
+  const currentBudgetIndexNotValid = (currentBudgetIndex) =>
+    !Number.isInteger(currentBudgetIndex) ||
+    currentBudgetIndex < 0 ||
+    currentBudgetIndex > 99;
 
   // Validation.
-  if (!Number.isInteger(app_user_id) || !Number.isInteger(id))
+  if (
+    !Number.isInteger(app_user_id) ||
+    !Number.isInteger(id) ||
+    currentBudgetIndexNotValid(current_budget_index)
+  )
     return res.sendStatus(400);
 
-  database('budget')
-    .where({ app_user_id })
-    .andWhere({ id })
-    .del(['id'])
+  database
+    .transaction((trx) =>
+      database('app_user')
+        .where({ id: app_user_id })
+        .update({ current_budget_index }, ['id'])
+        .transacting(trx)
+        .then((ids) => ids[0].id)
+        .then((app_user_id) =>
+          database('budget')
+            .where({ app_user_id })
+            .andWhere({ id })
+            .del(['id'])
+            .transacting(trx)
+        )
+    )
     .then((deletedBudgetIds) =>
       deletedBudgetIds.length
         ? res.json(deletedBudgetIds[0])
@@ -189,10 +209,31 @@ const handleSaveBudgets = (database) => (req, res) => {
     .catch((error) => res.sendStatus(400));
 };
 
+const handleCurrentBudgetIndexUpdate = (database) => (req, res) => {
+  const { id, current_budget_index } = req.body;
+
+  const currentBudgetIndexNotValid = (currentBudgetIndex) =>
+    !Number.isInteger(currentBudgetIndex) ||
+    currentBudgetIndex < 0 ||
+    currentBudgetIndex > 99;
+
+  // Validation.
+  if (!Number.isInteger(id) || currentBudgetIndexNotValid(current_budget_index))
+    return res.sendStatus(400);
+
+  // Save user's current budget index.
+  database('app_user')
+    .where({ id })
+    .update({ current_budget_index })
+    .then(() => res.sendStatus(200))
+    .catch((error) => res.sendStatus(400));
+};
+
 export {
   handleCreateBudget,
   handleCreateBudgetCopy,
   handleDeleteBudget,
   handleSaveBudget,
   handleSaveBudgets,
+  handleCurrentBudgetIndexUpdate,
 };

@@ -39,8 +39,7 @@ const handleSignUp = (database, bcrypt) => (req, res) => {
           )
           .transacting(trx)
           .then((ids) => ids[0].id)
-          /* Create a budget for the user, returning the user's id
-          to respond with the user. */
+          // Create a budget for the user, returning their id.
           .then((id) =>
             database('budget')
               .insert(

@@ -1,4 +1,4 @@
-const handleSignIn = (database, bcrypt) => (req, res) => {
+const handleSignIn = (knex, bcrypt) => (req, res) => {
   const { username, password } = req.body;
 
   // Validation
@@ -6,7 +6,7 @@ const handleSignIn = (database, bcrypt) => (req, res) => {
     return res.sendStatus(400);
 
   // Get the user's current hash.
-  database('app_user')
+  knex('app_user')
     .where({ username })
     .select('hash')
     .then((hashes) =>
@@ -17,7 +17,7 @@ const handleSignIn = (database, bcrypt) => (req, res) => {
     // If valid, return user.
     .then((isValid) =>
       isValid
-        ? database('app_user').where({ username }).select('id')
+        ? knex('app_user').where({ username }).select('id')
         : Promise.reject(Error())
     )
     .then((ids) => ids[0].id)
@@ -25,7 +25,7 @@ const handleSignIn = (database, bcrypt) => (req, res) => {
     // and other returning their budgets.
     .then((id) =>
       Promise.all([
-        database('app_user')
+        knex('app_user')
           .where({ id })
           .select(
             'id',
@@ -35,7 +35,7 @@ const handleSignIn = (database, bcrypt) => (req, res) => {
             'current_budget_index',
             'format_args'
           ),
-        database('budget')
+        knex('budget')
           .where({ app_user_id: id })
           .select(
             'id',

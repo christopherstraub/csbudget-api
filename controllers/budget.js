@@ -1,10 +1,10 @@
-const handleCreateBudget = (database) => (req, res) => {
+const handleCreateBudget = (knex) => (req, res) => {
   const { app_user_id, name } = req.body;
 
   // Validation.
   if (!Number.isInteger(app_user_id) || !name) return res.sendStatus(400);
 
-  database('budget')
+  knex('budget')
     .insert({ app_user_id, name }, [
       'id',
       'name',
@@ -18,7 +18,7 @@ const handleCreateBudget = (database) => (req, res) => {
     .catch((error) => res.sendStatus(400));
 };
 
-const handleCreateBudgetCopy = (database) => (req, res) => {
+const handleCreateBudgetCopy = (knex) => (req, res) => {
   const {
     app_user_id,
     name,
@@ -39,7 +39,7 @@ const handleCreateBudgetCopy = (database) => (req, res) => {
   )
     return res.sendStatus(400);
 
-  database('budget')
+  knex('budget')
     .insert(
       {
         app_user_id,
@@ -63,7 +63,7 @@ const handleCreateBudgetCopy = (database) => (req, res) => {
     .catch((error) => res.sendStatus(400));
 };
 
-const handleDeleteBudget = (database) => (req, res) => {
+const handleDeleteBudget = (knex) => (req, res) => {
   const { app_user_id, id, current_budget_index } = req.body;
 
   const currentBudgetIndexNotValid = (currentBudgetIndex) =>
@@ -79,15 +79,15 @@ const handleDeleteBudget = (database) => (req, res) => {
   )
     return res.sendStatus(400);
 
-  database
+  knex
     .transaction((trx) =>
-      database('app_user')
+      knex('app_user')
         .where({ id: app_user_id })
         .update({ current_budget_index }, ['id'])
         .transacting(trx)
         .then((ids) => ids[0].id)
         .then((app_user_id) =>
-          database('budget')
+          knex('budget')
             .where({ app_user_id })
             .andWhere({ id })
             .del(['id'])
@@ -102,7 +102,7 @@ const handleDeleteBudget = (database) => (req, res) => {
     .catch((error) => res.sendStatus(400));
 };
 
-const handleSaveBudget = (database) => (req, res) => {
+const handleSaveBudget = (knex) => (req, res) => {
   const {
     app_user_id,
     id,
@@ -125,7 +125,7 @@ const handleSaveBudget = (database) => (req, res) => {
   )
     return res.sendStatus(400);
 
-  database('budget')
+  knex('budget')
     .where({ app_user_id })
     .andWhere({ id })
     .update(
@@ -145,7 +145,7 @@ const handleSaveBudget = (database) => (req, res) => {
     .catch((error) => res.sendStatus(400));
 };
 
-const handleSaveBudgets = (database) => (req, res) => {
+const handleSaveBudgets = (knex) => (req, res) => {
   const { app_user_id, budgets } = req.body;
 
   // Validation.
@@ -156,7 +156,7 @@ const handleSaveBudgets = (database) => (req, res) => {
   method to the queries with the transaction object to join them
   as part of the transaction.
   */
-  database
+  knex
     .transaction((trx) => {
       const queries = budgets.map((budget) => {
         const {
@@ -167,7 +167,7 @@ const handleSaveBudgets = (database) => (req, res) => {
           entries,
         } = budget;
 
-        return database('budget')
+        return knex('budget')
           .where({ app_user_id })
           .andWhere({ id: budget.id })
           .update(
@@ -209,7 +209,7 @@ const handleSaveBudgets = (database) => (req, res) => {
     .catch((error) => res.sendStatus(400));
 };
 
-const handleCurrentBudgetIndexUpdate = (database) => (req, res) => {
+const handleCurrentBudgetIndexUpdate = (knex) => (req, res) => {
   const { id, current_budget_index } = req.body;
 
   const currentBudgetIndexNotValid = (currentBudgetIndex) =>
@@ -222,7 +222,7 @@ const handleCurrentBudgetIndexUpdate = (database) => (req, res) => {
     return res.sendStatus(400);
 
   // Save user's current budget index.
-  database('app_user')
+  knex('app_user')
     .where({ id })
     .update({ current_budget_index })
     .then(() => res.sendStatus(200))

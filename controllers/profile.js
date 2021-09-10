@@ -1,10 +1,10 @@
-const handleDisplayNameChange = (database) => (req, res) => {
+const handleDisplayNameChange = (knex) => (req, res) => {
   const { id, display_name } = req.body;
 
   // Validation.
   if (!Number.isInteger(id) || !display_name) return res.sendStatus(400);
 
-  database('app_user')
+  knex('app_user')
     .where({ id })
     .update({ display_name }, ['display_name'])
     .then((displayNames) =>
@@ -13,7 +13,7 @@ const handleDisplayNameChange = (database) => (req, res) => {
     .catch((error) => res.sendStatus(400));
 };
 
-const handlePasswordChange = (database, bcrypt) => (req, res) => {
+const handlePasswordChange = (knex, bcrypt) => (req, res) => {
   const { id, password, new_password } = req.body;
 
   // Validation.
@@ -30,7 +30,7 @@ const handlePasswordChange = (database, bcrypt) => (req, res) => {
     return res.sendStatus(400);
 
   // Get the user's current hash.
-  database('app_user')
+  knex('app_user')
     .where({ id })
     .select('hash')
     .then((hashes) =>
@@ -46,7 +46,7 @@ const handlePasswordChange = (database, bcrypt) => (req, res) => {
     )
     // Update database with new hash.
     .then((newHash) =>
-      database('app_user')
+      knex('app_user')
         .where({ id })
         .update({ hash: newHash })
         .then(() => res.sendStatus(200))
@@ -58,12 +58,12 @@ const handlePasswordChange = (database, bcrypt) => (req, res) => {
     );
 };
 
-const handleCurrencyChange = (database) => (req, res) => {
+const handleCurrencyChange = (knex) => (req, res) => {
   const { id, format_args } = req.body;
 
   if (!Number.isInteger(id) || !format_args) return res.sendStatus(400);
 
-  database('app_user')
+  knex('app_user')
     .where({ id })
     .update({ format_args: JSON.stringify(format_args) }, ['format_args'])
     .then((formatArgs) =>

@@ -1,4 +1,4 @@
-const handleSignUp = (database, bcrypt) => (req, res) => {
+const handleSignUp = (knex, bcrypt) => (req, res) => {
   const { display_name, username, password } = req.body;
 
   // Validation.
@@ -13,7 +13,7 @@ const handleSignUp = (database, bcrypt) => (req, res) => {
 
   /* If a user with the incoming username already exists,
   respond with a 409 Conflict status code. */
-  database('app_user')
+  knex('app_user')
     .where({ username })
     .select()
     .then((users) =>
@@ -25,9 +25,9 @@ const handleSignUp = (database, bcrypt) => (req, res) => {
     .then((hash) =>
       /* Return a transaction since both the user sign up and create budget
     queries should be successful to continue. */
-      database.transaction((trx) =>
+      knex.transaction((trx) =>
         // Insert user, returning their id.
-        database('app_user')
+        knex('app_user')
           .insert(
             {
               username,
@@ -41,7 +41,7 @@ const handleSignUp = (database, bcrypt) => (req, res) => {
           .then((ids) => ids[0].id)
           // Create a budget for the user, returning their id.
           .then((id) =>
-            database('budget')
+            knex('budget')
               .insert(
                 {
                   app_user_id: id,
@@ -59,7 +59,7 @@ const handleSignUp = (database, bcrypt) => (req, res) => {
     .then((ids) => ids[0].app_user_id)
     .then((id) =>
       Promise.all([
-        database('app_user')
+        knex('app_user')
           .where({ id })
           .select(
             'id',
@@ -69,7 +69,7 @@ const handleSignUp = (database, bcrypt) => (req, res) => {
             'current_budget_index',
             'format_args'
           ),
-        database('budget')
+        knex('budget')
           .where({ app_user_id: id })
           .select(
             'id',

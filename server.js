@@ -18,23 +18,23 @@ import {
   handleCurrencyChange,
 } from './controllers/profile.js';
 
-import database from './database.js';
+import knex from './knex-instance.js';
 
 const app = express();
 
 app.use(express.json());
 app.use(cors());
 
-app.post('/sign-up', handleSignUp(database, bcrypt));
-app.post('/sign-in', handleSignIn(database, bcrypt));
-app.post('/budget', handleCreateBudget(database));
-app.post('/budget-copy', handleCreateBudgetCopy(database));
-app.delete('/budget', handleDeleteBudget(database));
-app.put('/budget', handleSaveBudget(database));
-app.put('/budgets', handleSaveBudgets(database));
-app.put('/current-budget-index', handleCurrentBudgetIndexUpdate(database));
-app.put('/display-name', handleDisplayNameChange(database));
-app.put('/password', handlePasswordChange(database, bcrypt));
-app.put('/currency', handleCurrencyChange(database));
+app.post('/sign-up', handleSignUp(knex, bcrypt));
+app.post('/sign-in', handleSignIn(knex, bcrypt));
+app.post('/budget', handleCreateBudget(knex));
+app.post('/budget-copy', handleCreateBudgetCopy(knex));
+app.delete('/budget', handleDeleteBudget(knex));
+app.put('/budget', handleSaveBudget(knex));
+app.put('/budgets', handleSaveBudgets(knex));
+app.put('/current-budget-index', handleCurrentBudgetIndexUpdate(knex));
+app.put('/display-name', handleDisplayNameChange(knex));
+app.put('/password', handlePasswordChange(knex, bcrypt));
+app.put('/currency', handleCurrencyChange(knex));
 
 app.listen(process.env.PORT ?? 3001);
